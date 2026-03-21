@@ -1,0 +1,162 @@
+# Crown PrivateChat Crew - Task Definitions
+# Enhance existing PrivateChat (80% done) with 2026 Signal-grade privacy features
+
+privacy_feature_spec:
+  description: >
+    Based on 2026 top private messaging apps (Signal, Threema, Session, SimpleX, Wire),
+    create detailed PRD for the following privacy enhancements to add to PrivateChat:
+
+    MUST-HAVE (P0):
+    1. Disappearing Messages - per-conversation timer (30s/5m/1h/8h/1d/1w/4w)
+    2. Screenshot Protection - block screenshots + notify sender if bypassed
+    3. Read Receipt Toggle - per-conversation on/off
+    4. Typing Indicator Toggle - per-conversation on/off
+    5. Incognito Keyboard - disable input method learning in chat
+    6. App Lock Enhancement - biometric + PIN with auto-lock timer
+
+    SHOULD-HAVE (P1):
+    7. Link Preview Toggle - disable URL preview generation
+    8. Sealed Sender Mode - hide sender metadata from server
+    9. Encrypted Local Backup - AES-256 encrypted export/import
+    10. Media Auto-Delete - auto-purge downloaded media after viewing
+
+    NICE-TO-HAVE (P2):
+    11. Anonymous Registration - no phone number required option
+    12. Relay Proxy Mode - route through proxy for censorship resistance
+    13. Screen Security (Windows Recall protection for desktop version)
+
+    For each feature, output: user story, acceptance criteria, Tencent Cloud IM
+    integration notes (what's server-side vs client-side), UI mockup description,
+    and estimated complexity (S/M/L/XL).
+
+    Context: existing PrivateChat app uses Flutter + Tencent Cloud IM SDK,
+    already has SSL pinning, ProGuard, root detection, image compression,
+    voice messages, video compression, message retry, network status bar.
+    Project: {project_description}
+  expected_output: >
+    Complete PRD document with 13 feature specs, each containing:
+    user story, acceptance criteria, technical approach (client vs server),
+    UI description, Tencent IM SDK integration notes, complexity estimate,
+    and implementation priority (P0/P1/P2).
+  agent: product_lead
+
+implement_privacy_features:
+  description: >
+    Implement P0 privacy features in the existing PrivateChat Flutter codebase:
+
+    1. DISAPPEARING MESSAGES:
+       - Add timer selector UI in chat settings (30s to 4w, like Signal)
+       - Client-side message deletion after timer expires
+       - Show flame icon on disappearing messages
+       - Sync timer setting via Tencent IM custom message
+       - Handle edge cases: offline, background, app killed
+
+    2. SCREENSHOT PROTECTION:
+       - iOS: FLAG_SECURE equivalent via MethodChannel
+       - Android: WindowManager.LayoutParams.FLAG_SECURE
+       - Detection: listen for screenshot events, send notification to peer
+       - Settings toggle per conversation
+
+    3. READ RECEIPT / TYPING INDICATOR TOGGLES:
+       - Per-conversation settings stored in local DB
+       - Suppress Tencent IM read receipt API when disabled
+       - Suppress typing indicator events when disabled
+       - UI: switches in conversation settings page
+
+    4. INCOGNITO KEYBOARD:
+       - Set enableIMEPersonalizedLearning: false on TextField
+       - Set autocorrect: false, enableSuggestions: false
+       - Global toggle in privacy settings
+
+    5. APP LOCK ENHANCEMENT:
+       - Auto-lock timer (immediately/30s/1m/5m/30m)
+       - Blur content in app switcher
+       - Failed attempt counter with lockout
+
+    Use existing PrivateChat architecture (Clean Architecture + Riverpod).
+    All code must pass flutter analyze with zero warnings.
+  expected_output: >
+    Complete Dart/Flutter implementation for all 5 P0 privacy features:
+    new files, modified files, provider definitions, UI screens,
+    Tencent IM SDK integration code, and local DB schema changes.
+    All code follows existing project conventions.
+  agent: flutter_dev
+
+implement_advanced_privacy:
+  description: >
+    Implement P1 privacy features:
+
+    1. LINK PREVIEW TOGGLE:
+       - Intercept URL detection in message composer
+       - When disabled, send plain text without preview metadata
+       - Per-conversation and global setting
+
+    2. SEALED SENDER MODE:
+       - Client-side: strip sender info from message payload
+       - Use Tencent IM custom message with encrypted sender field
+       - Recipient decrypts sender identity locally
+       - Fallback to normal mode if recipient hasn't opted in
+
+    3. ENCRYPTED LOCAL BACKUP:
+       - Export all conversations to AES-256 encrypted file
+       - Password-based key derivation (PBKDF2, 100k iterations)
+       - Include media files (optional, warn about size)
+       - Import with password verification
+       - UI: Settings > Privacy > Backup & Restore
+
+    4. MEDIA AUTO-DELETE:
+       - After viewing media, start configurable auto-delete timer
+       - Options: immediately / 5min / 1hour / never
+       - Show countdown indicator on media messages
+       - Clean up from both app cache and secure storage
+  expected_output: >
+    Complete implementation for 4 P1 features with full source code,
+    crypto utility classes, backup/restore logic, UI screens,
+    and Tencent IM custom message format specifications.
+  agent: flutter_dev
+
+security_hardening:
+  description: >
+    Conduct full security audit and hardening of PrivateChat with new privacy features:
+
+    1. Verify disappearing messages truly delete (no SQLite remnants, no cache)
+    2. Verify screenshot protection works on both iOS 18 and Android 15
+    3. Verify encrypted backup uses proper KDF and authenticated encryption
+    4. Verify sealed sender doesn't leak metadata in Tencent IM logs
+    5. Verify incognito keyboard actually prevents input method learning
+    6. Check for new attack vectors introduced by privacy features
+    7. OWASP MASVS L2 compliance re-check
+    8. Verify 16KB page alignment for Android 15+
+    9. App size impact analysis (before/after privacy features)
+    10. Memory safety check for crypto operations (zeroize sensitive data)
+
+    Output: security audit report with findings, severity, and remediations.
+  expected_output: >
+    Security audit report with: OWASP MASVS L2 checklist results,
+    privacy feature verification results (pass/fail for each),
+    vulnerability findings with severity ratings,
+    remediation recommendations, and final security score.
+  agent: security_auditor
+
+privacy_testing:
+  description: >
+    Build comprehensive test suite for all privacy features:
+
+    1. Unit tests for crypto utilities (AES, PBKDF2, secure random)
+    2. Unit tests for disappearing message timer logic
+    3. Widget tests for privacy settings UI screens
+    4. Widget tests for disappearing message bubble with flame icon
+    5. Integration tests for backup/restore flow
+    6. E2E tests for screenshot protection (verify FLAG_SECURE active)
+    7. E2E tests for read receipt suppression
+    8. Adversarial tests: verify data deletion is permanent
+    9. Golden tests for privacy-related UI components
+    10. Coverage report targeting 85%+ for privacy module
+
+    Use existing test infrastructure (Flutter test + Patrol).
+  expected_output: >
+    Complete test suite with: unit test files, widget test files,
+    integration test scripts, adversarial test scenarios,
+    golden test baselines, coverage report, and test summary
+    with pass/fail counts and coverage percentage.
+  agent: qa_tester
