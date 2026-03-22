@@ -32,7 +32,7 @@ privacy_feature_spec:
     Context: existing PrivateChat app uses Flutter + Tencent Cloud IM SDK,
     already has SSL pinning, ProGuard, root detection, image compression,
     voice messages, video compression, message retry, network status bar.
-    Project: {project_description}
+    Project: PrivateChat - Flutter app with Tencent Cloud IM, 80% complete
   expected_output: >
     Complete PRD document with 13 feature specs, each containing:
     user story, acceptance criteria, technical approach (client vs server),

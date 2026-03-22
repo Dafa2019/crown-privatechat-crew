@@ -83,15 +83,13 @@ class CrownPrivateChatCrew():
 
     @crew
     def crew(self) -> Crew:
-        workers = [
-            a for a in self.agents
-            if a.role != self.product_lead().role
-        ]
+        manager = self.product_lead()
+        workers = [a for a in self.agents if a.role != manager.role]
         return Crew(
             agents=workers,
             tasks=self.tasks,
             process=Process.hierarchical,
-            manager_agent=self.product_lead(),
+            manager_agent=manager,
             planning=True,
             memory=True,
             verbose=True,
