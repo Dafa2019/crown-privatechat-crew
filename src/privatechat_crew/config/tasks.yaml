@@ -1,0 +1,104 @@
+privacy_feature_spec:
+  description: >
+    Research 2026 top private messaging apps (Signal, Threema, Session, Wire)
+    and produce a Privacy Feature Specification for PrivateChat.
+    Must cover: disappearing messages, screenshot protection, sealed sender,
+    incognito keyboard, encrypted backup, read receipt toggle, link preview toggle,
+    relay calls, device verification.
+    For each feature: define scope, acceptance criteria, Tencent Cloud IM compatibility,
+    client-side vs server-side implementation, priority (P0/P1/P2).
+    Output as structured PRD markdown.
+  expected_output: >
+    A complete Privacy Feature PRD in markdown format with:
+    - Feature list with P0/P1/P2 priority
+    - Acceptance criteria per feature
+    - Tencent Cloud IM compatibility matrix
+    - Implementation approach (client-side vs server-side)
+    - User flow diagrams (text-based)
+  agent: product_lead
+
+privacy_architecture:
+  description: >
+    Based on the Privacy Feature Spec, design the cryptographic and privacy
+    architecture for PrivateChat. Define:
+    - Disappearing message timer implementation (client-side deletion + server sync)
+    - Screenshot protection (FLAG_SECURE on Android, UIScreen.capturedDidChange on iOS)
+    - Sealed sender protocol (metadata stripping approach on top of Tencent IM)
+    - Incognito keyboard (InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
+    - Encrypted local backup (AES-256-GCM with user-derived key via Argon2)
+    - Per-conversation privacy settings storage schema
+    Output as technical architecture document with Dart/Flutter code snippets.
+  expected_output: >
+    Technical architecture document with:
+    - System diagram (text-based)
+    - Dart/Flutter code snippets for each privacy feature
+    - Platform channel definitions (Android/iOS)
+    - Data model for per-conversation privacy settings
+    - Encryption key derivation and storage strategy
+    - Threat model and mitigations
+  agent: privacy_engineer
+
+flutter_implementation:
+  description: >
+    Based on the privacy architecture, generate production-ready Flutter/Dart
+    code for the privacy features. Must integrate with existing PrivateChat
+    codebase (Clean Architecture, Riverpod, GoRouter, Tencent Cloud IM SDK).
+    Generate:
+    - PrivacySettingsProvider (Riverpod) for per-conversation settings
+    - DisappearingMessageService with timer management
+    - ScreenshotProtectionService with platform channels
+    - EncryptedBackupService with AES-256-GCM
+    - Privacy settings UI screen
+    - Updated message bubble widget with disappearing indicator
+    All code must follow existing project conventions and pass flutter analyze.
+  expected_output: >
+    Production-ready Flutter/Dart source files:
+    - lib/features/privacy/domain/ (entities, repositories)
+    - lib/features/privacy/data/ (implementations)
+    - lib/features/privacy/presentation/ (screens, widgets, providers)
+    - Platform channel code for Android (Kotlin) and iOS (Swift)
+    - Integration points with existing Tencent Cloud IM message handling
+  agent: flutter_dev
+
+security_audit:
+  description: >
+    Perform a comprehensive security audit of the PrivateChat privacy
+    implementation. Check against OWASP MASVS L2 requirements:
+    - Verify encryption implementation correctness (no ECB mode, proper IV/nonce)
+    - Check key storage (Android Keystore / iOS Secure Enclave usage)
+    - Verify screenshot protection cannot be bypassed
+    - Check for data leakage in logs, crash reports, clipboard
+    - Verify disappearing messages are truly deleted (not just hidden)
+    - Check SSL pinning configuration
+    - Review platform channel security
+    - Check for root/jailbreak detection bypass
+    Output a security audit report with findings and remediation steps.
+  expected_output: >
+    Security audit report with:
+    - OWASP MASVS L2 compliance checklist (pass/fail per item)
+    - Critical findings with severity (Critical/High/Medium/Low)
+    - Code-level remediation for each finding
+    - Penetration test scenarios and results
+    - Recommended security hardening steps
+  agent: security_auditor
+
+privacy_qa_testing:
+  description: >
+    Create and execute a comprehensive privacy test plan:
+    - Disappearing messages: verify deletion after timer, verify on both devices
+    - Screenshot protection: test FLAG_SECURE, test screen recording block
+    - Sealed sender: packet capture to verify no sender metadata in transit
+    - Incognito keyboard: verify no keyboard learning/autocomplete
+    - Encrypted backup: verify backup file is encrypted, test wrong password
+    - Read receipt toggle: verify no read status sent when disabled
+    - Per-conversation settings: verify settings are independent per chat
+    Generate test code (Flutter widget tests + integration tests).
+  expected_output: >
+    QA deliverables:
+    - Privacy test plan document (test cases with steps and expected results)
+    - Flutter widget test files for privacy features
+    - Integration test files for end-to-end privacy flows
+    - Test coverage report (target 85%+)
+    - Bug report template for privacy regressions
+    - Adversarial test results (attempted bypasses and outcomes)
+  agent: qa_tester
