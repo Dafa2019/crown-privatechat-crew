@@ -16,6 +16,7 @@ class CrownPrivateChatCrew():
     def privacy_engineer(self) -> Agent:
         return Agent(
             config=self.agents_config['privacy_engineer'],
+            llm="anthropic/claude-sonnet-4-6",
             verbose=True,
         )
 
@@ -23,6 +24,7 @@ class CrownPrivateChatCrew():
     def flutter_dev(self) -> Agent:
         return Agent(
             config=self.agents_config['flutter_dev'],
+            llm="anthropic/claude-sonnet-4-6",
             verbose=True,
         )
 
@@ -30,6 +32,7 @@ class CrownPrivateChatCrew():
     def security_auditor(self) -> Agent:
         return Agent(
             config=self.agents_config['security_auditor'],
+            llm="openai/gpt-4o",
             verbose=True,
         )
 
@@ -37,6 +40,7 @@ class CrownPrivateChatCrew():
     def qa_tester(self) -> Agent:
         return Agent(
             config=self.agents_config['qa_tester'],
+            llm="openai/gpt-4o",
             verbose=True,
         )
 
