@@ -38,7 +38,7 @@ privacy_feature_spec:
     user story, acceptance criteria, technical approach (client vs server),
     UI description, Tencent IM SDK integration notes, complexity estimate,
     and implementation priority (P0/P1/P2).
-  agent: product_lead
+  agent: privacy_engineer
 
 implement_privacy_features:
   description: >

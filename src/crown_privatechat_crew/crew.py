@@ -1,27 +1,14 @@
-"""Crown PrivateChat Crew v1.0 - Signal-grade Privacy on Tencent Cloud IM"""
+"""Crown PrivateChat Crew v2.0 - Signal-grade Privacy on Tencent Cloud IM"""
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 
 
 @CrewBase
 class CrownPrivateChatCrew():
-    """PrivateChat Crew - 1 Product Lead (Manager) + 4 Workers"""
+    """PrivateChat Crew - 4 Workers with auto manager"""
 
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
-
-    # ── Manager Agent ──
-
-    @agent
-    def product_lead(self) -> Agent:
-        return Agent(
-            config=self.agents_config['product_lead'],
-            llm="anthropic/claude-opus-4-20250514",
-            allow_delegation=True,
-            memory=True,
-            verbose=True,
-            max_iter=25,
-        )
 
     # ── Worker Agents ──
 
@@ -29,7 +16,6 @@ class CrownPrivateChatCrew():
     def privacy_engineer(self) -> Agent:
         return Agent(
             config=self.agents_config['privacy_engineer'],
-            llm="anthropic/claude-sonnet-4-20250514",
             verbose=True,
         )
 
@@ -37,7 +23,6 @@ class CrownPrivateChatCrew():
     def flutter_dev(self) -> Agent:
         return Agent(
             config=self.agents_config['flutter_dev'],
-            llm="anthropic/claude-sonnet-4-20250514",
             verbose=True,
         )
 
@@ -45,7 +30,6 @@ class CrownPrivateChatCrew():
     def security_auditor(self) -> Agent:
         return Agent(
             config=self.agents_config['security_auditor'],
-            llm="gpt-4o",
             verbose=True,
         )
 
@@ -53,7 +37,6 @@ class CrownPrivateChatCrew():
     def qa_tester(self) -> Agent:
         return Agent(
             config=self.agents_config['qa_tester'],
-            llm="gpt-4o",
             verbose=True,
         )
 
@@ -83,13 +66,11 @@ class CrownPrivateChatCrew():
 
     @crew
     def crew(self) -> Crew:
-        manager = self.product_lead()
-        workers = [a for a in self.agents if a.role != manager.role]
         return Crew(
-            agents=workers,
+            agents=self.agents,
             tasks=self.tasks,
             process=Process.hierarchical,
-            manager_agent=manager,
+            manager_llm="anthropic/claude-sonnet-4-6",
             planning=True,
             memory=True,
             verbose=True,
